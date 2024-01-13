@@ -1,4 +1,5 @@
 pandas
 BeautifulSoup4
 requests
+lxml
 streamlit
