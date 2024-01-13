@@ -36,7 +36,6 @@ def word_format(word):
     link = word.find("h3", class_="definition-liste-titre").a.get("href")
     obj["link"] = link
     
-    
     return obj
 
 
@@ -60,7 +59,7 @@ entries = alphabet_obj.keys()
 
 # %% ai_vocabulary_web_scraping.ipynb 9
 st.title("GLossaire IA")
-st.markdown("Les données ont été extraites du site de [CNIL](%s) à fin de créer une application qui présente les entrées de façon plus intuitive de pouvoir créer des questionnaires." % base_link+ str(0))
+st.markdown("Les données ont été extraites du site de [CNIL](%s) à fin de créer une application qui présente les entrées de façon plus intuitive de pouvoir créer des questionnaires." % pages[0])
 
 selected_letter = st.selectbox(
     'Par quelle lettre commence le terme que vous cherchez',
