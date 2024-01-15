@@ -8,6 +8,10 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import streamlit as st
+pd.options.display.max_columns = 20
+pd.options.display.max_rows = 20
+pd.options.display.max_colwidth = 80
+
 
 # %% ai_vocabulary_web_scraping.ipynb 5
 base_link = "https://www.cnil.fr/fr/intelligence-artificielle/glossaire-ia?page="
@@ -16,16 +20,16 @@ for i in range(13):
     pages.append(base_link + str(i))
 
 
-# %% ai_vocabulary_web_scraping.ipynb 7
+# %% ai_vocabulary_web_scraping.ipynb 8
 alphabet_list = list(map(chr, range(97, 123)))
 
-# %% ai_vocabulary_web_scraping.ipynb 9
+# %% ai_vocabulary_web_scraping.ipynb 10
 alphabet_obj = {}
 
 for char in alphabet_list:
     alphabet_obj[char]= []
 
-# %% ai_vocabulary_web_scraping.ipynb 11
+# %% ai_vocabulary_web_scraping.ipynb 12
 def word_format(word):
     obj = {}
     title = word.find("h3", class_="definition-liste-titre").a.text
@@ -39,7 +43,7 @@ def word_format(word):
     return obj
 
 
-# %% ai_vocabulary_web_scraping.ipynb 13
+# %% ai_vocabulary_web_scraping.ipynb 14
 for page in pages:
     html_text = requests.get(page).text
     soup = BeautifulSoup(html_text, 'lxml')
@@ -53,11 +57,33 @@ for page in pages:
             alphabet_obj[obj["entry"]].append(obj)
 
 
-# %% ai_vocabulary_web_scraping.ipynb 17
+# %% ai_vocabulary_web_scraping.ipynb 15
+@st.cache_data
+def web_scraper(alphabet):
+    alphabet_obj = alphabet.copy()
+    for page in pages:
+        html_text = requests.get(page).text
+        soup = BeautifulSoup(html_text, 'lxml')
+        words = soup.find_all("div",class_="list-inner")
+        for word in words:
+            obj = word_format(word)
+            try:
+                alphabet_obj[obj["entry"]].append(obj)
+            except:
+                alphabet_obj[obj["entry"]] = []
+                alphabet_obj[obj["entry"]].append(obj)
+            
+    return alphabet_obj
+    
+
+# %% ai_vocabulary_web_scraping.ipynb 16
+alphabet_obj = web_scraper(alphabet_obj)
+
+# %% ai_vocabulary_web_scraping.ipynb 20
 entries = alphabet_obj.keys()
 
 
-# %% ai_vocabulary_web_scraping.ipynb 19
+# %% ai_vocabulary_web_scraping.ipynb 22
 st.title("GLossaire IA")
 st.markdown("Les données ont été extraites du site de [CNIL](%s) à fin de créer une application qui présente les entrées de façon plus intuitive de pouvoir créer des questionnaires." % pages[0])
 
@@ -67,18 +93,18 @@ selected_letter = st.selectbox(
 
 
 
-# %% ai_vocabulary_web_scraping.ipynb 21
+# %% ai_vocabulary_web_scraping.ipynb 24
 df = pd.DataFrame(alphabet_obj[selected_letter])
 st.dataframe(df)
 
-# %% ai_vocabulary_web_scraping.ipynb 23
+# %% ai_vocabulary_web_scraping.ipynb 26
 def print_(e):
     return e["title"]
 word_list= list(map(print_, alphabet_obj[selected_letter]))
 
 
 
-# %% ai_vocabulary_web_scraping.ipynb 25
+# %% ai_vocabulary_web_scraping.ipynb 28
 selected_entry = None
 isLen =len(word_list) > 0
 if isLen:
@@ -88,7 +114,7 @@ if isLen:
 else:
     st.write("Il n'y a pas de mots correspondant à cette entrée.")
 
-# %% ai_vocabulary_web_scraping.ipynb 27
+# %% ai_vocabulary_web_scraping.ipynb 30
 def filter_cb(x):
     if x["title"] == selected_entry:
         return True
