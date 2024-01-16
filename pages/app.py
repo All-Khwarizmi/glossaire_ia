@@ -14,6 +14,10 @@ pd.options.display.max_rows = 20
 pd.options.display.max_colwidth = 80
 
 
+# %% ../ai_vocabulary_web_scraping.ipynb 4
+# Create the SQL connection to words_db as specified in your secrets file.
+conn = st.connection('words_db', type='sql')
+
 # %% ../ai_vocabulary_web_scraping.ipynb 7
 base_link = "https://www.cnil.fr/fr/intelligence-artificielle/glossaire-ia?page="
 pages = []
