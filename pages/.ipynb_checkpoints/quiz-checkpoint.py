@@ -86,6 +86,7 @@ def inverse_bool():
 idx = None
 try:
     answers = st.session_state.answers
+    random.shuffle(answers)
     true_answer = st.session_state.true_answer
     question = st.session_state.question
     
