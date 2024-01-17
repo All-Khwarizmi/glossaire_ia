@@ -6,9 +6,6 @@ __all__ = []
 # %% ../quiz.ipynb 1
 import streamlit as st
 import streamlit_book as stb
-from streamlit_jupyter import StreamlitPatcher, tqdm
-
-StreamlitPatcher().jupyter() 
 
 # %% ../quiz.ipynb 2
 st.title("Quiz")
@@ -44,11 +41,6 @@ if "true_answer" not in st.session_state:
 
 if "answers" not in st.session_state:
     st.session_state["answers"] = []
-
-
-
-#st.write(st.session_state)
-
 
 
 # %% ../quiz.ipynb 8
