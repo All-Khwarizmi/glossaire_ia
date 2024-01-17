@@ -4,3 +4,4 @@ requests
 lxml
 streamlit
 SQLAlchemy
+streamlit_book

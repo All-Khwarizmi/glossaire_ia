@@ -5,9 +5,14 @@ __all__ = []
 
 # %% ../quiz.ipynb 1
 import streamlit as st
+import streamlit_book as stb
+from streamlit_jupyter import StreamlitPatcher, tqdm
+
+StreamlitPatcher().jupyter() 
 
 # %% ../quiz.ipynb 2
-st.title("Second Page")
+st.title("Quiz")
+st.subheader("Testez vos connaissances en IA")
 
 # %% ../quiz.ipynb 3
 # Create the SQL connection to pets_db as specified in your secrets file.
@@ -18,5 +23,81 @@ conn = st.connection('words_db', type='sql')
    
 
 # Query and display the data you inserted
-pet_owners = conn.query('select * from words')
-st.dataframe(pet_owners)
+words = conn.query('select * from words')
+#st.dataframe(words)
+
+
+# %% ../quiz.ipynb 5
+
+# %% ../quiz.ipynb 6
+if 'refresh' not in st.session_state:
+    st.session_state['refresh'] = 0
+
+if 'first_render' not in st.session_state:
+    st.session_state["first_render"] = 1
+
+if "question" not in st.session_state:
+    st.session_state["question"] = ""
+
+if "true_answer" not in st.session_state:
+    st.session_state["true_answer"] = ""
+
+if "answers" not in st.session_state:
+    st.session_state["answers"] = []
+
+
+
+#st.write(st.session_state)
+
+
+
+# %% ../quiz.ipynb 8
+import random
+
+def question_creator(words):
+    if  st.session_state.refresh == 1 or st.session_state.first_render == 1 :
+        st.session_state["first_render"] = 0
+        a_word = words.sample()
+        b_word = words.sample()
+        c_word = words.sample()
+        d_word = words.sample()
+        st.session_state.question = f"Que'est-ce que \"{a_word['name'].values[0]}\"?"
+        a_rep = a_word["definition"]
+        st.session_state.answers.append(a_rep.values[0])
+        b_rep = b_word["definition"]
+        st.session_state.answers.append(b_rep.values[0])
+        c_rep = c_word["definition"]
+        st.session_state.answers.append(c_rep.values[0])
+        d_rep = d_word["definition"]
+        st.session_state.answers.append(d_rep.values[0])
+        st.session_state.true_answer =a_rep.values[0]
+        
+    
+
+# %% ../quiz.ipynb 9
+question_creator(words)
+
+
+# %% ../quiz.ipynb 10
+def inverse_bool():
+    if st.session_state["refresh"] == 0:
+        st.session_state["refresh"] = 1
+    
+idx = None
+try:
+    answers = st.session_state.answers
+    true_answer = st.session_state.true_answer
+    question = st.session_state.question
+    
+    idx = answers.index(true_answer)
+    stb.single_choice(question,
+                      answers,
+                      idx)
+    st.button("Prochaine question", on_click=inverse_bool)
+except:
+    st.write(f"Index not found / idx:{idx} ")
+
+
+# %% ../quiz.ipynb 11
+# |exporti
+
