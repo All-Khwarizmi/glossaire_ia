@@ -42,6 +42,9 @@ if "true_answer" not in st.session_state:
 if "answers" not in st.session_state:
     st.session_state["answers"] = []
 
+if "shuffle" not in st.session_state:
+    st.session_state["shuffle"] = 1
+
 
 # %% ../quiz.ipynb 8
 import random
@@ -54,6 +57,7 @@ def question_creator(words):
         c_word = words.sample()
         d_word = words.sample()
         st.session_state.question = f"Que'est-ce que \"{a_word['name'].values[0]}\"?"
+        st.session_state.answers = []
         a_rep = a_word["definition"]
         st.session_state.answers.append(a_rep.values[0])
         b_rep = b_word["definition"]
@@ -72,13 +76,19 @@ question_creator(words)
 
 # %% ../quiz.ipynb 10
 def inverse_bool():
+    
     if st.session_state["refresh"] == 0:
         st.session_state["refresh"] = 1
+        st.session_state.shuffle = 1
     
 idx = None
 try:
     answers = st.session_state.answers
-    random.shuffle(answers)
+    if st.session_state.shuffle == 1:
+        random.shuffle(answers)
+        st.session_state.shuffle = 0
+    
+    
     true_answer = st.session_state.true_answer
     question = st.session_state.question
     
