@@ -83,9 +83,6 @@ entries = alphabet_obj.keys()
 
 
 # %% ../ai_vocabulary_web_scraping.ipynb 24
-st.title("GLossaire IA")
-st.markdown("Les données ont été extraites du site de [CNIL](%s) à fin de créer une application qui présente les entrées de façon plus intuitive de pouvoir créer des questionnaires." % pages[0])
-
 selected_letter = st.selectbox(
     'Par quelle lettre commence le terme que vous cherchez',
     entries)
